@@ -1,0 +1,196 @@
+<script>
+    export default {
+        data() {
+            return {
+                usersList: [],
+                firstName: '',
+                lastName: '',
+                email: '',
+                password: '',
+                passwordVerify: '',
+                disableCheck: ''
+            }
+        },
+     
+        created() {;
+            this.retrieveNewUsersList();
+        },
+        
+        methods: {
+            showUserModal: function() {
+                $('#myModal').modal('show');
+                
+                // Clear our the form elements for next time
+                this.firstName = '';
+                this.lastName = '';
+                this.email = '';
+                this.password = '';
+                this.passwordVerify = '';
+                
+                this.hideModals();
+            },
+            
+            closeForm: function() {
+
+
+            },
+            
+            saveForm: function() {
+                var self = this;
+                var valfail = false;
+                
+                // Resetting the errors, should have done this with an
+                // errors array.
+                self.hideModals();
+                
+                // Perform form validation
+                if (!this.firstName || !this.lastName || !this.email || 
+                    !this.password || !this.passwordVerify) {
+                    $('#fieldsRequired').show();
+                    valfail = true;
+                }
+                
+                // Check passwords are the same
+                if (this.password != this.passwordVerify) {
+                    $('#passwordMatch').show();
+                    var valfail = true;
+                }
+                
+                if (valfail == true) {
+                    return;
+                }
+                
+                // Now send the add user message
+                var userData = {
+                    firstName : this.firstName,
+                    lastName : this.lastName,
+                    email : this.email,
+                    password : this.password
+                };
+                
+                $.ajax({
+                   method : 'POST',
+                   url : '/service/v1/addNewUser',
+                   data : userData,
+                   success : function() {
+                       // Close modal and refresh list
+                       $('#myModal').modal('hide');
+                       
+                       // Refresh the user list
+                       self.retrieveNewUsersList();
+                   },
+                   error: function() {
+                       $('#submissionError').show();
+                       
+                   }
+                    
+                });
+            },
+            
+            hideModals: function() {
+                $('#fieldsRequired').hide();
+                $('#passwordMatch').hide();
+                $('#submissionError').hide();
+            },
+            
+            retrieveNewUsersList: function() {
+                var self = this;
+                
+                // get users here
+                $.ajax({
+                    type: 'GET',
+                    cache: false,
+                    url: '/service/v1/getUsers',
+                    
+                    success: function(result) {
+                        self.usersList = result;
+                    }
+                });
+            },
+            
+            toggleEnable : function(userId) {
+                var self = this;
+                
+                // Disable the user with user id userId
+                $.ajax({
+                    type: 'POST',
+                    cache: false,
+                    url: '/service/v1/toggleEnable',
+                    data: {
+                        userId : userId    
+                    }
+                });
+                
+            },
+            
+            checkChecked : function(val) {
+                return false;
+                // for (var i = 0; i < this.usersList.length; i++) {
+                //     if (this.usersList[i] == val && this.usersList[i] == false) {
+                //         return true;
+                //     }
+                //     else {
+                //         return false;
+                //     }
+                // }
+            }
+            
+        }
+            
+    }
+</script>
+
+
+<template>
+    <div>
+        <h2>User Admin</h2>
+        
+
+        
+        <button type="button"  v-on:click="showUserModal" class="btn btn-primary" data-togle="modal" data-target="#myModal">Add User</button>
+        <br />
+        <br />
+        <br />
+        <div id="usersDiv">
+            <table class="table">
+                <tr>
+                    <th>Id</th><th>Name</th><th>Email</th><th>Disable</th>
+                </tr>
+                <tr v-for="u in usersList"><td>{{ u.id }}</td><td>{{ u.name }}</td><td>{{ u.email }}</td><td><input type="checkbox" v-on:change="toggleEnable(u.id)" :checked="u.disabled == true" /></td></tr>
+            </table>
+        </div>
+        
+        <!-- Add Modal -->
+        <div id="myModal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+        
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add User</h4>
+              </div>
+              <div class="modal-body">
+                <p>All fields required.</p>
+                <div id="fieldsRequired" class="alert alert-danger" style="display: none">All Fields are required</div>
+                <div id="passwordMatch" class="alert alert-danger" style="display: none">Passwords do not match</div>
+                <div id="submissionError" class="alert alert-danger" style="display: none">Sorry, something didn't work quite right.</div>
+                <p><label for="firstName">First Name</label><input type="text" id="firstName" v-model="firstName" class="form-control" /></p>
+                <p><label for="lastName">Last Name</label><input type="text" id="lastName" v-model="lastName" class="form-control" /></p>
+                <p><label for="email">Email Address</label><input type="text" id="email" v-model="email" class="form-control" /></p>
+                <p><label for="password">Password</label><input type="password" id="password" v-model="password" class="form-control" /></p>
+                <p><label for="passwordVerify">Verify Your Password</label><input type="password" id="passwordVerify" v-model="passwordVerify" class="form-control" /></p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" v-on:click="closeForm">Close</button>
+                <button type="button" class="btn btn-primary" v-on:click="saveForm">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+    
+    
+    
+    </div>
+</template>
