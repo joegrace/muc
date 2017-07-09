@@ -18,6 +18,7 @@ class ApiUserController extends Controller
             'name' => $r->input('firstName'),
             'email' =>$r->input('email'),
             'password' => bcrypt($r->input('password')),
+            'disabled' => false
         ]);
         
         return;
