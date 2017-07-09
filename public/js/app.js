@@ -49568,31 +49568,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   })]), _vm._v(" "), _c('p', [_c('label', {
     attrs: {
-      "for": "lastName"
-    }
-  }, [_vm._v("Last Name")]), _c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.lastName),
-      expression: "lastName"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      "type": "text",
-      "id": "lastName"
-    },
-    domProps: {
-      "value": (_vm.lastName)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.lastName = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('p', [_c('label', {
-    attrs: {
       "for": "email"
     }
   }, [_vm._v("Email Address")]), _c('input', {
@@ -49759,7 +49734,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             self.hideModals();
 
             // Perform form validation
-            if (!this.firstName || !this.lastName || !this.email || !this.password || !this.passwordVerify) {
+            if (!this.firstName || !this.email || !this.password || !this.passwordVerify) {
                 $('#fieldsRequired').show();
                 valfail = true;
             }
@@ -49777,7 +49752,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             // Now send the add user message
             var userData = {
                 firstName: this.firstName,
-                lastName: this.lastName,
                 email: this.email,
                 password: this.password
             };

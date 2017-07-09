@@ -44,7 +44,7 @@
                 self.hideModals();
                 
                 // Perform form validation
-                if (!this.firstName || !this.lastName || !this.email || 
+                if (!this.firstName || !this.email || 
                     !this.password || !this.passwordVerify) {
                     $('#fieldsRequired').show();
                     valfail = true;
@@ -63,7 +63,6 @@
                 // Now send the add user message
                 var userData = {
                     firstName : this.firstName,
-                    lastName : this.lastName,
                     email : this.email,
                     password : this.password
                 };
@@ -176,7 +175,6 @@
                 <div id="passwordMatch" class="alert alert-danger" style="display: none">Passwords do not match</div>
                 <div id="submissionError" class="alert alert-danger" style="display: none">Sorry, something didn't work quite right.</div>
                 <p><label for="firstName">First Name</label><input type="text" id="firstName" v-model="firstName" class="form-control" /></p>
-                <p><label for="lastName">Last Name</label><input type="text" id="lastName" v-model="lastName" class="form-control" /></p>
                 <p><label for="email">Email Address</label><input type="text" id="email" v-model="email" class="form-control" /></p>
                 <p><label for="password">Password</label><input type="password" id="password" v-model="password" class="form-control" /></p>
                 <p><label for="passwordVerify">Verify Your Password</label><input type="password" id="passwordVerify" v-model="passwordVerify" class="form-control" /></p>
