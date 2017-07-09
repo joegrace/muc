@@ -27,9 +27,12 @@
                         <span class="icon-bar"></span>
                     </button>
 
-                    <router-link class="navbar-brand" to="/">Home</router-link>
-                    <router-link class="navbar-brand" to="/test">Chat</router-link>
-                    <router-link class="navbar-brand" to="/users">User Admin</router-link>
+                    <!-- Only display if logged in -->
+                    @if (Auth::check())
+                        <router-link class="navbar-brand" to="/">Home</router-link>
+                        <router-link class="navbar-brand" to="/test">Chat</router-link>
+                        <router-link class="navbar-brand" to="/users">User Admin</router-link>
+                    @endif
                 </div>
 
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">

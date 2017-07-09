@@ -73,6 +73,32 @@
                 else {
                     self.addUserName(mb);
                 }
+            },
+            
+            sendUserNotification(from, message) {
+                if (!("Notification") in window) {
+                    return;
+                }
+                
+                var msgOptions = {
+                    body: message
+                };
+                
+                // Do we already have permission?
+                if (Notification.permission === 'granted') {
+                    var notification = new Notification(from, msgOptions);
+                    return;
+                }
+                
+                // User permission
+                if (Notification.permission !== 'denied') {
+                    Notification.requestPermission(function (permission) {
+                      // If the user accepts, let's create a notification
+                      if (permission === "granted") {
+                        var notification = new Notification(from, msgOptions);
+                      }
+                    });
+                }
             }
         },
         
@@ -100,8 +126,11 @@
                 .listen('MessageEvent', (e) => {
                     console.log('Received: ' + e.msg.text);
                     self.messageBuffer.push(e.msg);
-                    
                     self.getUserData(self.messageBuffer);
+                    
+                    // Send browser notification
+                    if (document.hidden)
+                        self.sendUserNotification(e.msg.userName, e.msg.text);
                 }
             );
             
