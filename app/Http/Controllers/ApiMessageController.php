@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Message;
 use App\User;
 use App\Events\MessageEvent;
+use App\Repositories\UserRepository;
+use App\Repositories\MessageRepository;
 
 class ApiMessageController extends Controller
 {
@@ -18,25 +20,21 @@ class ApiMessageController extends Controller
     {
     }
 
-    public function message(Request $r)
+    public function message(Request $r, MessageRepository $messageRepository)
     {
-        $m = new Message();
-        $m->text = $r->input('Msg');
-        $m->user_id = \Auth::user()->id;
-        $m->save();
+        $newMessage = $messageRepository->create(\Auth::user()->id, $r->input('Msg'));
         
-        event(new MessageEvent($m));
+        event(new MessageEvent($newMessage));
         
         return response()->json([
             'Status' => 'OK' 
         ]);
     }
     
-    public function getMessagesInitial(Request $r) 
+    public function getMessagesInitial(Request $r, MessageRepository $messageRepository) 
     {
         // Get the last 50 messages
-        //$messages = Message::limit(30)->orderBy('id', 'desc');
-        $messages = Message::orderBy('id', 'desc')->limit(50)->get();
+        $messages = $messageRepository->getLastNMessages(50);
         
         return response()->json($messages);
     }
@@ -57,11 +55,10 @@ class ApiMessageController extends Controller
     * This method is for returning all the users
     *
     */
-    public function findAllUsers(Request $r) 
+    public function findAllUsers(Request $r, UserRepository $userRepo) 
     {
-        $allUsers = User::all();
-    
-        return response()->json($allUsers);
+        $users = $userRepo->getAllUsers();
+        return response()->json($users);
     }
 
 }

@@ -8,23 +8,24 @@ use App\User;
 use App\Events\MessageEvent;
 use Illuminate\Support\Facades\Hash;
 use Auth;
+use App\Repositories\UserRepository;
 
 class ApiUserController extends Controller
 {
-    public function addNewUser(Request $r)
+    public function addNewUser(Request $r, UserRepository $userRepository)
     {
-        // Create new user
-        $res = User::create([
-            'name' => $r->input('firstName'),
-            'email' =>$r->input('email'),
-            'password' => bcrypt($r->input('password')),
-            'disabled' => 0
-        ]);
+        $user = new User();
+        $user->name = $r->input('firstName');
+        $user->email = $r->input('email');
+        $user->password = bcrypt($r->input('password'));
+        $user->disabled = 0;
+        
+        $userRepository->addUser($user);    
         
         return;
     }
     
-    public function changeUserPassword(Request $r) 
+    public function changeUserPassword(Request $r, UserRepository $userRepository) 
     {
         // Make sure the old password is valid
         if (!Hash::check($r->input('oldPassword'), Auth::user()->password)) {
@@ -36,30 +37,32 @@ class ApiUserController extends Controller
                 'StatusMessage' => 'Old password does not match' 
             ]);
         }
-        
-        // Now lets do the password change.
-        // Get the user
-        $loggedInUser = User::find(Auth::user()->id);
-        $loggedInUser->password = Hash::make($r->input('newPassword'));
-        $loggedInUser->save();
+
+        $userRepository->changeUserPassword(Auth::user()->id, $r->input('newPassword'));
         
         return response()->json([
             'Status' => 'Success'
         ]);
     }
     
-    public function toggleEnable(Request $r) 
+    public function toggleEnable(Request $r, UserRepository $userRepository) 
     {
-        $user = User::find($r->input('userId'));
-        
-        if ($user == null) 
+        if (!$userRepository->userExists($r->input('userId'))) 
         {
-            throw new Exception("Invalid paramater");
+            throw new \Exception("Invalid paramater");
         }
+     
+        $user = $userRepository->getUser($r->input('userId'));
         
-        $user->disabled = $user->disabled == 1 ? 0 : 1;
-        $user->save();
-
+        if ($user->disabled == 0) 
+        {
+            $userRepository->disableUser($r->input('userId'));    
+        }
+        else 
+        {
+            $userRepository->enableUser($r->input('userId'));    
+        }
+     
         return response()->json([
             'Status' => 'Success'
         ]);
