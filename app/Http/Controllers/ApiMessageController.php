@@ -24,8 +24,6 @@ class ApiMessageController extends Controller
     {
         $newMessage = $messageRepository->create(\Auth::user()->id, $r->input('Msg'));
         
-        event(new MessageEvent($newMessage));
-        
         return response()->json([
             'Status' => 'OK' 
         ]);

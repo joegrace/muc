@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Message;
+use App\Observers\MessageObserver;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,6 +18,9 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         \Schema::defaultStringLength(191);
+        
+        // Message observer
+        Message::observe(MessageObserver::class);
     }
 
     /**
