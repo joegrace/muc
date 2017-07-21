@@ -22,14 +22,16 @@ class ApiMessageController extends Controller
 
     public function message(Request $r, MessageRepository $messageRepository)
     {
-        $newMessage = $messageRepository->create(\Auth::user()->id, $r->input('Msg'));
+        $newMessage = $messageRepository->
+            create(\Auth::user()->id, $r->input('Msg'));
         
         return response()->json([
             'Status' => 'OK' 
         ]);
     }
     
-    public function getMessagesInitial(Request $r, MessageRepository $messageRepository) 
+    public function getMessagesInitial(Request $r, 
+        MessageRepository $messageRepository) 
     {
         // Get the last 50 messages
         $messages = $messageRepository->getLastNMessages(50);
