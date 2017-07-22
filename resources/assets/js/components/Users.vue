@@ -70,23 +70,12 @@
                     password : this.password
                 };
                 
-                $.ajax({
-                   method : 'POST',
-                   url : '/service/v1/addNewUser',
-                   data : userData,
-                   success : function() {
-                       // Close modal and refresh list
-                       $('#myModal').modal('hide');
-                       
-                       // Refresh the user list
-                       self.retrieveNewUsersList();
-                   },
-                   error: function() {
-                       $('#submissionError').show();
-                       
-                   }
-                    
-                });
+                self.userService.AddNewUser(userData).then(function() {
+                    // This refreshes the user list
+                    self.retrieveNewUsersList();
+                }).catch(function(error) {
+                    alert(error);
+                })
             },
             
             hideModals: function() {
@@ -101,7 +90,7 @@
                 self.userService.GetAllUsers().then(function(users) {
                    self.usersList = users;
                 }).catch(function(error){
-                    console.log(error);
+                    alert(error);
                 });
             },
             
@@ -109,31 +98,12 @@
                 var self = this;
                 
                 // Disable the user with user id userId
-                $.ajax({
-                    type: 'POST',
-                    cache: false,
-                    url: '/service/v1/toggleEnable',
-                    data: {
-                        userId : userId    
-                    }
-                });
+                self.userService.ToggleEnable().catch(function() {
+                    alert("Sorry, could not toggle user.");
+                })
                 
             },
-            
-            checkChecked : function(val) {
-                return false;
-                // for (var i = 0; i < this.usersList.length; i++) {
-                //     if (this.usersList[i] == val && this.usersList[i] == false) {
-                //         return true;
-                //     }
-                //     else {
-                //         return false;
-                //     }
-                // }
-            }
-            
         }
-            
     }
 </script>
 

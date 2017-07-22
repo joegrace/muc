@@ -49760,21 +49760,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 password: this.password
             };
 
-            $.ajax({
-                method: 'POST',
-                url: '/service/v1/addNewUser',
-                data: userData,
-                success: function success() {
-                    // Close modal and refresh list
-                    $('#myModal').modal('hide');
-
-                    // Refresh the user list
-                    self.retrieveNewUsersList();
-                },
-                error: function error() {
-                    $('#submissionError').show();
-                }
-
+            self.userService.AddNewUser(userData).then(function () {
+                // This refreshes the user list
+                self.retrieveNewUsersList();
+            }).catch(function (error) {
+                alert(error);
             });
         },
 
@@ -49790,7 +49780,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             self.userService.GetAllUsers().then(function (users) {
                 self.usersList = users;
             }).catch(function (error) {
-                console.log(error);
+                alert(error);
             });
         },
 
@@ -49798,30 +49788,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var self = this;
 
             // Disable the user with user id userId
-            $.ajax({
-                type: 'POST',
-                cache: false,
-                url: '/service/v1/toggleEnable',
-                data: {
-                    userId: userId
-                }
+            self.userService.ToggleEnable().catch(function () {
+                alert("Sorry, could not toggle user.");
             });
-        },
-
-        checkChecked: function checkChecked(val) {
-            return false;
-            // for (var i = 0; i < this.usersList.length; i++) {
-            //     if (this.usersList[i] == val && this.usersList[i] == false) {
-            //         return true;
-            //     }
-            //     else {
-            //         return false;
-            //     }
-            // }
         }
-
     }
-
 });
 
 /***/ }),
@@ -50077,13 +50048,58 @@ var UserService = function () {
                 $.ajax({
                     type: 'GET',
                     cache: false,
-                    url: '/service/v1/getUserz',
+                    url: '/service/v1/getUsers',
 
                     success: function success(result) {
                         resolve(result);
                     },
                     error: function error() {
                         reject("Could not retrieve user info.");
+                    }
+                });
+            });
+        }
+    }, {
+        key: 'ToggleEnable',
+        value: function ToggleEnable(userId) {
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    type: 'POST',
+                    cache: false,
+                    url: '/service/v1/toggleEnable',
+                    data: {
+                        userId: userId
+                    },
+
+                    success: function success() {
+                        resolve(true);
+                    },
+
+                    error: function error() {
+                        reject("Could not toggle user enable.");
+                    }
+                });
+            });
+        }
+    }, {
+        key: 'AddNewUser',
+        value: function AddNewUser(userData) {
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    method: 'POST',
+                    url: '/service/v1/addNewUser',
+                    data: userData,
+                    success: function success() {
+                        // Close modal and refresh list
+                        $('#myModal').modal('hide');
+
+                        // Refresh the user list
+                        //self.retrieveNewUsersList();
+                        resolve(true);
+                    },
+                    error: function error() {
+                        //$('#submissionError').show();
+                        reject("Could not add this user");
                     }
                 });
             });
