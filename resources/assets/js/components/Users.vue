@@ -1,7 +1,10 @@
 <script>
+    import UserService from '../Services/UserService';
+
     export default {
         data() {
             return {
+                userService : new UserService(),
                 usersList: [],
                 firstName: '',
                 lastName: '',
@@ -95,15 +98,10 @@
             retrieveNewUsersList: function() {
                 var self = this;
                 
-                // get users here
-                $.ajax({
-                    type: 'GET',
-                    cache: false,
-                    url: '/service/v1/getUsers',
-                    
-                    success: function(result) {
-                        self.usersList = result;
-                    }
+                self.userService.GetAllUsers().then(function(users) {
+                   self.usersList = users;
+                }).catch(function(error){
+                    console.log(error);
                 });
             },
             

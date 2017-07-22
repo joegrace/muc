@@ -49690,10 +49690,14 @@ if (false) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Services_UserService__ = __webpack_require__(63);
+
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
+            userService: new __WEBPACK_IMPORTED_MODULE_0__Services_UserService__["a" /* default */](),
             usersList: [],
             firstName: '',
             lastName: '',
@@ -49783,15 +49787,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         retrieveNewUsersList: function retrieveNewUsersList() {
             var self = this;
 
-            // get users here
-            $.ajax({
-                type: 'GET',
-                cache: false,
-                url: '/service/v1/getUsers',
-
-                success: function success(result) {
-                    self.usersList = result;
-                }
+            self.userService.GetAllUsers().then(function (users) {
+                self.usersList = users;
+            }).catch(function (error) {
+                console.log(error);
             });
         },
 
@@ -50055,6 +50054,46 @@ if (false) {
      require("vue-hot-reload-api").rerender("data-v-df97c9b0", module.exports)
   }
 }
+
+/***/ }),
+/* 63 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var UserService = function () {
+    function UserService() {
+        _classCallCheck(this, UserService);
+    }
+
+    _createClass(UserService, [{
+        key: 'GetAllUsers',
+        value: function GetAllUsers() {
+            return new Promise(function (resolve, reject) {
+                // Call the server
+                $.ajax({
+                    type: 'GET',
+                    cache: false,
+                    url: '/service/v1/getUserz',
+
+                    success: function success(result) {
+                        resolve(result);
+                    },
+                    error: function error() {
+                        reject("Could not retrieve user info.");
+                    }
+                });
+            });
+        }
+    }]);
+
+    return UserService;
+}();
+
+/* harmony default export */ __webpack_exports__["a"] = (UserService);
 
 /***/ })
 /******/ ]);
