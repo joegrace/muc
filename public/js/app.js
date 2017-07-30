@@ -1718,6 +1718,11 @@ module.exports = function spread(callback) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Services_MessageService__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Services_UserService__ = __webpack_require__(63);
+
+
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -1725,7 +1730,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             testvar: '(=^.^=)',
             message: '',
             messageBuffer: [],
-            userData: []
+            userData: [],
+            messageService: new __WEBPACK_IMPORTED_MODULE_0__Services_MessageService__["a" /* default */](),
+            userService: new __WEBPACK_IMPORTED_MODULE_1__Services_UserService__["a" /* default */]()
         };
     },
 
@@ -1738,15 +1745,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 Msg: self.message
             };
 
-            $.ajax({
-                type: 'POST',
-                cache: false,
-                url: '/service/v1/message',
-                data: message,
-                success: function success(result) {
-                    console.log('Res: ' + result);
-                    self.message = '';
-                }
+            this.messageService.SaveMessage(message).then(function () {
+                self.message = '';
+            }).catch(function (error) {
+                alert(error);
             });
         },
         addUserName: function addUserName(mb) {
@@ -1776,15 +1778,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             if (self.userData.length == 0) {
                 // We need to retrieve user data from the server
                 // Lets fill the userdata
-                $.ajax({
-                    type: 'GET',
-                    cache: false,
-                    url: '/service/v1/getUsers',
+                // $.ajax({
+                //     type: 'GET',
+                //     cache: false,
+                //     url: '/service/v1/getUsers',
 
-                    success: function success(result) {
-                        self.userData = result;
-                        self.addUserName(mb);
-                    }
+                //     success: function(result) {
+                //         self.userData = result;
+                //         self.addUserName(mb);
+                //     }
+                // });
+                this.userService.GetAllUsers().then(function (result) {
+                    self.userData = result;
+                    self.addUserName(mb);
+                }).catch(function (error) {
+                    alert("Could not get user info");
                 });
             } else {
                 self.addUserName(mb);
@@ -1820,18 +1828,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     created: function created() {
         var self = this;
 
-        $.ajax({
-            type: 'GET',
-            cache: false,
-            url: '/service/v1/messagesInitial',
-            success: function success(result) {
-                // We have to sort result
-                result.sort(function (a, b) {
-                    return a.id > b.id ? 1 : b.id > a.id ? -1 : 0;
-                });
-
-                self.getUserData(result);
-            }
+        this.messageService.GetLastMessages().then(function (result) {
+            self.getUserData(result);
+        }).catch(function (error) {
+            alert(error);
         });
 
         // Set up echo / pusher listener
@@ -49727,8 +49727,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.hideModals();
         },
 
-        closeForm: function closeForm() {},
-
         saveForm: function saveForm() {
             var self = this;
             var valfail = false;
@@ -50110,6 +50108,67 @@ var UserService = function () {
 }();
 
 /* harmony default export */ __webpack_exports__["a"] = (UserService);
+
+/***/ }),
+/* 64 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var MessageService = function () {
+    function MessageService() {
+        _classCallCheck(this, MessageService);
+    }
+
+    _createClass(MessageService, [{
+        key: 'SaveMessage',
+        value: function SaveMessage(messageInfo) {
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    type: 'POST',
+                    cache: false,
+                    url: '/service/v1/message',
+                    data: messageInfo,
+                    success: function success(result) {
+                        resolve(true);
+                    },
+                    error: function error() {
+                        reject("Could not send message");
+                    }
+                });
+            });
+        }
+    }, {
+        key: 'GetLastMessages',
+        value: function GetLastMessages() {
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    type: 'GET',
+                    cache: false,
+                    url: '/service/v1/messagesInitial',
+                    success: function success(result) {
+                        // We have to sort result
+                        result.sort(function (a, b) {
+                            return a.id > b.id ? 1 : b.id > a.id ? -1 : 0;
+                        });
+
+                        resolve(result);
+                    },
+                    error: function error() {
+                        reject("Could not get recent messages");
+                    }
+                });
+            });
+        }
+    }]);
+
+    return MessageService;
+}();
+
+/* harmony default export */ __webpack_exports__["a"] = (MessageService);
 
 /***/ })
 /******/ ]);

@@ -1,11 +1,16 @@
 <script>
+    import MessageService from '../Services/MessageService'
+    import UserService from '../Services/UserService'
+
     export default {
         data() {
             return {
                 testvar : '(=^.^=)',
                 message : '',
                 messageBuffer : [],
-                userData : []
+                userData : [],
+                messageService: new MessageService(),
+                userService: new UserService()
             }
         },
         
@@ -17,18 +22,13 @@
                     Msg : self.message
                 };
                 
-                $.ajax(
-                    {
-                        type: 'POST',
-                        cache: false,
-                        url: '/service/v1/message',
-                        data: message,
-                        success: function(result) {
-                            console.log('Res: ' + result);
-                            self.message = '';
-                        }
-                    }
-                );
+                this.messageService.SaveMessage(message).then(function() {
+                    self.message = '';
+                })
+                .catch(function(error) {
+                    alert(error);
+                })
+                    
             },
             
             addUserName(mb) {
@@ -59,15 +59,22 @@
                 if (self.userData.length == 0) {
                     // We need to retrieve user data from the server
                     // Lets fill the userdata
-                    $.ajax({
-                        type: 'GET',
-                        cache: false,
-                        url: '/service/v1/getUsers',
+                    // $.ajax({
+                    //     type: 'GET',
+                    //     cache: false,
+                    //     url: '/service/v1/getUsers',
                         
-                        success: function(result) {
-                            self.userData = result;
-                            self.addUserName(mb);
-                        }
+                    //     success: function(result) {
+                    //         self.userData = result;
+                    //         self.addUserName(mb);
+                    //     }
+                    // });
+                    this.userService.GetAllUsers().then(function(result) {
+                        self.userData = result;
+                        self.addUserName(mb);
+                    })
+                    .catch(function(error) {
+                        alert("Could not get user info"); 
                     });
                 }
                 else {
@@ -104,22 +111,13 @@
         
         created() {
             var self = this;
-            
-            $.ajax(
-                {
-                    type: 'GET',
-                    cache: false,
-                    url: '/service/v1/messagesInitial',
-                    success: function(result) {
-                        // We have to sort result
-                        result.sort(function(a,b) {
-                            return (a.id > b.id ? 1 : ((b.id > a.id) ? -1 : 0));
-                        });
-                        
-                        self.getUserData(result);
-                    }
-                }
-            );
+
+            this.messageService.GetLastMessages().then(function(result) {
+                self.getUserData(result);
+            })
+            .catch(function(error) {
+                alert(error); 
+            });
             
             // Set up echo / pusher listener
             Echo.channel('message')

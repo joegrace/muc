@@ -33,11 +33,6 @@
                 this.hideModals();
             },
             
-            closeForm: function() {
-
-
-            },
-            
             saveForm: function() {
                 var self = this;
                 var valfail = false;
