@@ -30,4 +30,6 @@ Route::group(['prefix' => 'service/v1', 'middleware' => 'auth'], function() {
     Route::post('/addNewUser', 'ApiUserController@addNewUser');
     Route::post('/changeUserPassword', 'ApiUserController@changeUserPassword');
     Route::post('/toggleEnable', 'ApiUserController@toggleEnable');
+    Route::post('/setAlive', 'ApiUserController@setAlive');
+    Route::get('/whosOnline', 'ApiUserController@whosOnline');
 });

@@ -9,6 +9,7 @@ use App\Events\MessageEvent;
 use Illuminate\Support\Facades\Hash;
 use Auth;
 use App\Repositories\UserRepository;
+use Carbon\Carbon;
 
 class ApiUserController extends Controller
 {
@@ -66,5 +67,17 @@ class ApiUserController extends Controller
         return response()->json([
             'Status' => 'Success'
         ]);
+    }
+    
+    public function setAlive(UserRepository $userRepository)
+    {
+        $userRepository->setUserAlive(Auth::user()->id);
+    }
+    
+    public function whosOnline(Request $r, UserRepository $userRepository)
+    {
+        $onlineUsers = $userRepository->getActiveUsers();
+        
+        return response()->json($onlineUsers);
     }
 }

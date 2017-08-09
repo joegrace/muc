@@ -57,18 +57,6 @@
                 var self = this;
                 
                 if (self.userData.length == 0) {
-                    // We need to retrieve user data from the server
-                    // Lets fill the userdata
-                    // $.ajax({
-                    //     type: 'GET',
-                    //     cache: false,
-                    //     url: '/service/v1/getUsers',
-                        
-                    //     success: function(result) {
-                    //         self.userData = result;
-                    //         self.addUserName(mb);
-                    //     }
-                    // });
                     this.userService.GetAllUsers().then(function(result) {
                         self.userData = result;
                         self.addUserName(mb);

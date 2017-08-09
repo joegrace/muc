@@ -11,7 +11,8 @@ class UserSeeder extends Seeder
             'name' => 'Joe',
             'email' => 'joe@w1sk.com',
             'password' => bcrypt('secret'),
-            'disabled' => false
+            'disabled' => false,
+            'lastAlive' => '2017-07-01 00:00:00'
         ]);
     }
     

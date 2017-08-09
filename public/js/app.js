@@ -848,6 +848,7 @@ window.Vue = __webpack_require__(45);
  */
 
 Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]);
+Vue.component('whosonline', __webpack_require__(66));
 
 var routes = [{ path: '/test', component: __webpack_require__(37) }, { path: '/users', component: __webpack_require__(57) }, { path: '/', component: __webpack_require__(38) }, { path: '/passwordChange', component: __webpack_require__(61) }];
 
@@ -1776,18 +1777,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var self = this;
 
             if (self.userData.length == 0) {
-                // We need to retrieve user data from the server
-                // Lets fill the userdata
-                // $.ajax({
-                //     type: 'GET',
-                //     cache: false,
-                //     url: '/service/v1/getUsers',
-
-                //     success: function(result) {
-                //         self.userData = result;
-                //         self.addUserName(mb);
-                //     }
-                // });
                 this.userService.GetAllUsers().then(function (result) {
                     self.userData = result;
                     self.addUserName(mb);
@@ -49545,7 +49534,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "for": "firstName"
     }
-  }, [_vm._v("First Name")]), _c('input', {
+  }, [_vm._v("Name")]), _c('input', {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -49648,9 +49637,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "type": "button",
       "data-dismiss": "modal"
-    },
-    on: {
-      "click": _vm.closeForm
     }
   }, [_vm._v("Close")]), _vm._v(" "), _c('button', {
     staticClass: "btn btn-primary",
@@ -49786,7 +49772,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var self = this;
 
             // Disable the user with user id userId
-            self.userService.ToggleEnable().catch(function () {
+            self.userService.ToggleEnable(userId).catch(function () {
                 alert("Sorry, could not toggle user.");
             });
         }
@@ -50102,6 +50088,42 @@ var UserService = function () {
                 });
             });
         }
+    }, {
+        key: 'SetUserAlive',
+        value: function SetUserAlive() {
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    method: 'POST',
+                    url: '/service/v1/setAlive',
+
+                    success: function success() {
+                        resolve(true);
+                    },
+
+                    error: function error() {
+                        reject("Could not update current status");
+                    }
+                });
+            });
+        }
+    }, {
+        key: 'WhosOnline',
+        value: function WhosOnline() {
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    method: 'GET',
+                    url: '/service/v1/whosOnline',
+
+                    success: function success(result) {
+                        resolve(result);
+                    },
+
+                    error: function error(_error) {
+                        reject("Could not get whos online list");
+                    }
+                });
+            });
+        }
     }]);
 
     return UserService;
@@ -50169,6 +50191,105 @@ var MessageService = function () {
 }();
 
 /* harmony default export */ __webpack_exports__["a"] = (MessageService);
+
+/***/ }),
+/* 65 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Services_UserService__ = __webpack_require__(63);
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            stuff: 'omg',
+            userService: new __WEBPACK_IMPORTED_MODULE_0__Services_UserService__["a" /* default */](),
+            online: []
+        };
+    },
+    created: function created() {
+        var self = this;
+
+        // Tell the server we are here every 10 seconds
+        this.userService.SetUserAlive();
+        setInterval(this.userService.SetUserAlive, 10000);
+
+        // Get whos online list use websockets for this too TODO
+        this.whosOnline();
+        setInterval(this.whosOnline, 10000);
+    },
+
+
+    methods: {
+        whosOnline: function whosOnline() {
+            var self = this;
+
+            // This gets who has checked in within the last 10 seconds
+            self.userService.WhosOnline().then(function (result) {
+                self.online = result;
+            });
+        }
+
+    }
+});
+
+/***/ }),
+/* 66 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(7)(
+  /* script */
+  __webpack_require__(65),
+  /* template */
+  __webpack_require__(67),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/home/ubuntu/workspace/resources/assets/js/components/WhosOnline.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] WhosOnline.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-837f4fb6", Component.options)
+  } else {
+    hotAPI.reload("data-v-837f4fb6", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 67 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    attrs: {
+      "id": "whosOnline"
+    }
+  }, [_c('h1', [_vm._v("Who's Online n' Stuff")]), _vm._v(" "), _c('ul', _vm._l((_vm.online), function(user) {
+    return _c('li', [_vm._v(_vm._s(user.name))])
+  }))])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-837f4fb6", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

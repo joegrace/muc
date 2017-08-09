@@ -93,7 +93,7 @@
                 var self = this;
                 
                 // Disable the user with user id userId
-                self.userService.ToggleEnable().catch(function() {
+                self.userService.ToggleEnable(userId).catch(function() {
                     alert("Sorry, could not toggle user.");
                 })
                 
@@ -137,13 +137,14 @@
                 <div id="fieldsRequired" class="alert alert-danger" style="display: none">All Fields are required</div>
                 <div id="passwordMatch" class="alert alert-danger" style="display: none">Passwords do not match</div>
                 <div id="submissionError" class="alert alert-danger" style="display: none">Sorry, something didn't work quite right.</div>
-                <p><label for="firstName">First Name</label><input type="text" id="firstName" v-model="firstName" class="form-control" /></p>
+                <p><label for="firstName">Name</label><input type="text" id="firstName" v-model="firstName" class="form-control" /></p>
                 <p><label for="email">Email Address</label><input type="text" id="email" v-model="email" class="form-control" /></p>
                 <p><label for="password">Password</label><input type="password" id="password" v-model="password" class="form-control" /></p>
                 <p><label for="passwordVerify">Verify Your Password</label><input type="password" id="passwordVerify" v-model="passwordVerify" class="form-control" /></p>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" v-on:click="closeForm">Close</button>
+                <!--<button type="button" class="btn btn-default" data-dismiss="modal" v-on:click="closeForm">Close</button>-->
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" v-on:click="saveForm">Save</button>
               </div>
             </div>

@@ -3,6 +3,7 @@ namespace App\Repositories;
 
 use App\User;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class UserRepository {
     
@@ -63,5 +64,26 @@ class UserRepository {
         }
         
         return false;
+    }
+    
+    public function setUserAlive($userId)
+    {
+        $currentUser = $this->getUser($userId);
+        $currentUser->lastAlive = Carbon::now();
+        
+        $currentUser->save();
+    }
+    
+    public function getActiveUsers()
+    {
+        // Get current datetime minus 15 seconds. We are going to get all
+        // the users from that point forward who are active
+        $activeDate = Carbon::now()->subSeconds(15);
+        
+        $users = User::where('lastAlive', '>', $activeDate)->get();
+        
+
+        
+        return $users;
     }
 }

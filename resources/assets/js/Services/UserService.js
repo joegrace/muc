@@ -64,5 +64,45 @@ export default class UserService
         });        
     }
     
+    SetUserAlive()
+    {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                method : 'POST',
+                url : '/service/v1/setAlive',
+                
+                success : function() 
+                {
+                    resolve(true);
+                },
+                
+                error: function() 
+                {
+                    reject("Could not update current status");
+                }
+            })
+            
+        });
+        
+        
+    }
     
+    WhosOnline() 
+    {
+        return new Promise((resolve, reject) => {
+           $.ajax({
+              method : 'GET',
+              url : '/service/v1/whosOnline',
+              
+              success : function(result) {
+                  resolve(result)
+              },
+              
+              error : function(error) {
+                  reject("Could not get whos online list")
+              }
+           });
+            
+        });
+    }
 }
