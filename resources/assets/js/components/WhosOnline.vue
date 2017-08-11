@@ -16,11 +16,11 @@
             
             // Tell the server we are here every 10 seconds
             this.userService.SetUserAlive();
-            setInterval(this.userService.SetUserAlive, 10000);
+            setInterval(this.userService.SetUserAlive, 5000);
             
             // Get whos online list use websockets for this too TODO
             this.whosOnline();
-            setInterval(this.whosOnline, 10000);
+            setInterval(this.whosOnline, 5000);
         },
         
         methods: 
@@ -45,7 +45,7 @@
 
 <template>
     <div id="whosOnline">
-        <h1>Who's Online n' Stuff</h1>
+        <p><h1>Who's Online n' Stuff</h1></p>
         <ul>
             <li v-for="user in online">{{ user.name }}</li>
         </ul>

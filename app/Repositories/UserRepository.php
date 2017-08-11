@@ -78,7 +78,7 @@ class UserRepository {
     {
         // Get current datetime minus 15 seconds. We are going to get all
         // the users from that point forward who are active
-        $activeDate = Carbon::now()->subSeconds(15);
+        $activeDate = Carbon::now()->subSeconds(7);
         
         $users = User::where('lastAlive', '>', $activeDate)->get();
         
