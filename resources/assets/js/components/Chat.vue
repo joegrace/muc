@@ -131,25 +131,28 @@
 
 <template>
     <div>
-        <h1>{{ testvar }}</h1>
+        <p>Type a chat message below. Press enter to send.</p>
         <div id="chatText">
             <div v-for="m in messageBuffer"><p>{{ m.created_at }} [{{ m.userName }}] : {{ m.text }}</p></div>
         </div>
-        <input v-on:keyup.enter="sendMessage" v-model="message" type="text" name="message" id="message"/>
+        <span class="blinking-cursor">
+        <input v-on:keyup.enter="sendMessage" v-model="message" type="text" name="message" id="message" />
+        </span>
     </div>
 </template>
 
 
 <style>
     #message {
-        background-color: red;
+        background-color: white;
         width: 100%;
     }
     #chatText {
         height: 400px;
         right: 100%;
         background-color: black;
-        color: green;
+        color: #66FF00;
         overflow:auto;
     }
+    
 </style>

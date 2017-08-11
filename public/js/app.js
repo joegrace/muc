@@ -4708,7 +4708,7 @@ if (typeof jQuery === 'undefined') {
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(38)();
-exports.push([module.i, "\n#message {\n    background-color: red;\n    width: 100%;\n}\n#chatText {\n    height: 400px;\n    right: 100%;\n    background-color: black;\n    color: green;\n    overflow:auto;\n}\n", ""]);
+exports.push([module.i, "\n#message {\n    background-color: white;\n    width: 100%;\n}\n#chatText {\n    height: 400px;\n    right: 100%;\n    background-color: black;\n    color: #66FF00;\n    overflow:auto;\n}\n\n", ""]);
 
 /***/ }),
 /* 38 */
@@ -37758,13 +37758,15 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('h1', [_vm._v(_vm._s(_vm.testvar))]), _vm._v(" "), _c('div', {
+  return _c('div', [_c('p', [_vm._v("Type a chat message below. Press enter to send.")]), _vm._v(" "), _c('div', {
     attrs: {
       "id": "chatText"
     }
   }, _vm._l((_vm.messageBuffer), function(m) {
     return _c('div', [_c('p', [_vm._v(_vm._s(m.created_at) + " [" + _vm._s(m.userName) + "] : " + _vm._s(m.text))])])
-  })), _vm._v(" "), _c('input', {
+  })), _vm._v(" "), _c('span', {
+    staticClass: "blinking-cursor"
+  }, [_c('input', {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -37789,7 +37791,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.message = $event.target.value
       }
     }
-  })])
+  })])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
