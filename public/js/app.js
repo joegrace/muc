@@ -1855,7 +1855,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             messageBuffer: [],
             userData: [],
             messageService: new __WEBPACK_IMPORTED_MODULE_0__Services_MessageService__["a" /* default */](),
-            userService: new __WEBPACK_IMPORTED_MODULE_1__Services_UserService__["a" /* default */]()
+            userService: new __WEBPACK_IMPORTED_MODULE_1__Services_UserService__["a" /* default */](),
+            loading: true
         };
     },
 
@@ -1902,6 +1903,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 this.userService.GetAllUsers().then(function (result) {
                     self.userData = result;
                     self.addUserName(mb);
+                    self.loading = false;
                 }).catch(function (error) {
                     alert("Could not get user info");
                 });
@@ -4711,7 +4713,7 @@ if (typeof jQuery === 'undefined') {
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(38)();
-exports.push([module.i, "\n#message {\n    background-color: white;\n    width: 100%;\n}\n#chatText {\n    height: 400px;\n    right: 100%;\n    background-color: black;\n    color: #66FF00;\n    overflow:auto;\n}\n\n", ""]);
+exports.push([module.i, "\n#message {\n    background-color: white;\n    width: 100%;\n}\n#chatText {\n    height: 400px;\n    right: 100%;\n    overflow:auto;\n}\n.message {\n    border-left: 6px solid orange;\n}\n\n", ""]);
 
 /***/ }),
 /* 38 */
@@ -37781,9 +37783,19 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "id": "chatText"
     }
-  }, _vm._l((_vm.messageBuffer), function(m) {
-    return _c('div', [_c('p', [_vm._v(_vm._s(m.created_at) + " [" + _vm._s(m.userName) + "] : " + _vm._s(m.text))])])
-  })), _vm._v(" "), _c('span', {
+  }, [_c('center', [_c('i', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.loading),
+      expression: "loading"
+    }],
+    staticClass: "fa fa-cog fa-spin fa-3x fa-fw"
+  })]), _vm._v(" "), _vm._l((_vm.messageBuffer), function(m) {
+    return _c('div', {
+      staticClass: "message"
+    }, [_c('p', [_vm._v(_vm._s(m.created_at) + " [" + _vm._s(m.userName) + "] : " + _vm._s(m.text))])])
+  })], 2), _vm._v(" "), _c('span', {
     staticClass: "blinking-cursor"
   }, [_c('input', {
     directives: [{

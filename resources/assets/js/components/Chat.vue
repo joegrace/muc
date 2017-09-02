@@ -10,7 +10,8 @@
                 messageBuffer : [],
                 userData : [],
                 messageService: new MessageService(),
-                userService: new UserService()
+                userService: new UserService(),
+                loading : true
             }
         },
         
@@ -60,6 +61,7 @@
                     this.userService.GetAllUsers().then(function(result) {
                         self.userData = result;
                         self.addUserName(mb);
+                        self.loading = false;
                     })
                     .catch(function(error) {
                         alert("Could not get user info"); 
@@ -133,7 +135,8 @@
     <div>
         <p>Type a chat message below. Press enter to send.</p>
         <div id="chatText">
-            <div v-for="m in messageBuffer"><p>{{ m.created_at }} [{{ m.userName }}] : {{ m.text }}</p></div>
+            <center><i  v-show="loading" class="fa fa-cog fa-spin fa-3x fa-fw"></i></center>
+            <div class="message" v-for="m in messageBuffer"><p>{{ m.created_at }} [{{ m.userName }}] : {{ m.text }}</p></div>
         </div>
         <span class="blinking-cursor">
         <input v-on:keyup.enter="sendMessage" v-model="message" type="text" name="message" id="message" />
@@ -150,9 +153,12 @@
     #chatText {
         height: 400px;
         right: 100%;
-        background-color: black;
-        color: #66FF00;
         overflow:auto;
+    }
+    
+    .message {
+        border-left: 6px solid orange;
+        
     }
     
 </style>
