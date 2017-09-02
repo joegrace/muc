@@ -58,6 +58,8 @@ class ApiMessageController extends Controller
     public function findAllUsers(Request $r, UserRepository $userRepo) 
     {
         $users = $userRepo->getAllUsers();
+        
+        sleep(2);
         return response()->json($users);
     }
 

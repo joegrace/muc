@@ -49,7 +49,7 @@
         <ul>
             <li v-for="user in online">{{ user.name }}</li>
         </ul>
-        
+        <center><i  v-show="online.length == 0" class="fa fa-cog fa-spin fa-3x fa-fw"></i></center>
     </div>
 </template>
 

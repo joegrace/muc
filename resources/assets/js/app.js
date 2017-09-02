@@ -21,8 +21,8 @@ window.Vue = require('vue');
  
 
 Vue.use(VueRouter);
-Vue.component('whosonline', require('./components/WhosOnline.vue'));
 
+Vue.component('whosonline', require('./components/WhosOnline.vue'));
 
 const routes = [
     {path : '/test', component: require('./components/Chat.vue')},
@@ -45,4 +45,3 @@ $.ajaxSetup({
     }
 }); 
 
-            

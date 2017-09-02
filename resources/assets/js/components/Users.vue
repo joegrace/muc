@@ -11,7 +11,8 @@
                 email: '',
                 password: '',
                 passwordVerify: '',
-                disableCheck: ''
+                disableCheck: '',
+                loading : true
             }
         },
      
@@ -84,6 +85,7 @@
                 
                 self.userService.GetAllUsers().then(function(users) {
                    self.usersList = users;
+                   self.loading = false;
                 }).catch(function(error){
                     alert(error);
                 });
@@ -120,6 +122,7 @@
                 </tr>
                 <tr v-for="u in usersList"><td>{{ u.id }}</td><td>{{ u.name }}</td><td>{{ u.email }}</td><td><input type="checkbox" v-on:change="toggleEnable(u.id)" :checked="u.disabled == true" /></td></tr>
             </table>
+            <center><i  v-show="loading" class="fa fa-cog fa-spin fa-3x fa-fw"></i></center>
         </div>
         
         <!-- Add Modal -->

@@ -969,6 +969,7 @@ window.Vue = __webpack_require__(58);
  */
 
 Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]);
+
 Vue.component('whosonline', __webpack_require__(48));
 
 var routes = [{ path: '/test', component: __webpack_require__(44) }, { path: '/users', component: __webpack_require__(47) }, { path: '/', component: __webpack_require__(45) }, { path: '/passwordChange', component: __webpack_require__(46) }];
@@ -2062,7 +2063,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             email: '',
             password: '',
             passwordVerify: '',
-            disableCheck: ''
+            disableCheck: '',
+            loading: true
         };
     },
     created: function created() {
@@ -2135,6 +2137,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             self.userService.GetAllUsers().then(function (users) {
                 self.usersList = users;
+                self.loading = false;
             }).catch(function (error) {
                 alert(error);
             });
@@ -37421,7 +37424,15 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('p'), _c('h1', [_vm._v("Who's Online n' Stuff")]), _c('p'), _vm._v(" "), _c('ul', _vm._l((_vm.online), function(user) {
     return _c('li', [_vm._v(_vm._s(user.name))])
-  }))])
+  })), _vm._v(" "), _c('center', [_c('i', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.online.length == 0),
+      expression: "online.length == 0"
+    }],
+    staticClass: "fa fa-cog fa-spin fa-3x fa-fw"
+  })])], 1)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -37577,7 +37588,15 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       }
     })])])
-  })], 2)]), _vm._v(" "), _c('div', {
+  })], 2), _vm._v(" "), _c('center', [_c('i', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.loading),
+      expression: "loading"
+    }],
+    staticClass: "fa fa-cog fa-spin fa-3x fa-fw"
+  })])], 1), _vm._v(" "), _c('div', {
     staticClass: "modal fade",
     attrs: {
       "id": "myModal",
