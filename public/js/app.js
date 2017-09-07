@@ -37424,7 +37424,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "id": "whosOnline"
     }
-  }, [_c('p'), _c('h1', [_vm._v("Who's Online n' Stuff")]), _c('p'), _vm._v(" "), _c('ul', _vm._l((_vm.online), function(user) {
+  }, [_c('ul', _vm._l((_vm.online), function(user) {
     return _c('li', [_vm._v(_vm._s(user.name))])
   })), _vm._v(" "), _c('center', [_c('i', {
     directives: [{

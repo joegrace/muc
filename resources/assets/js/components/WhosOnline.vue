@@ -45,7 +45,7 @@
 
 <template>
     <div id="whosOnline">
-        <p><h1>Who's Online n' Stuff</h1></p>
+        
         <ul>
             <li v-for="user in online">{{ user.name }}</li>
         </ul>
