@@ -151,7 +151,7 @@
         width: 100%;
     }
     #chatText {
-        height: 400px;
+        height: 62vh;
         right: 100%;
         overflow:auto;
     }

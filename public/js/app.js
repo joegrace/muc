@@ -4713,7 +4713,7 @@ if (typeof jQuery === 'undefined') {
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(38)();
-exports.push([module.i, "\n#message {\n    background-color: white;\n    width: 100%;\n}\n#chatText {\n    height: 400px;\n    right: 100%;\n    overflow:auto;\n}\n.message {\n    border-left: 6px solid orange;\n}\n\n", ""]);
+exports.push([module.i, "\n#message {\n    background-color: white;\n    width: 100%;\n}\n#chatText {\n    height: 62vh;\n    right: 100%;\n    overflow:auto;\n}\n.message {\n    border-left: 6px solid orange;\n}\n\n", ""]);
 
 /***/ }),
 /* 38 */
