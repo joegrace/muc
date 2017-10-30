@@ -59,7 +59,6 @@ class ApiMessageController extends Controller
     {
         $users = $userRepo->getAllUsers();
         
-        sleep(2);
         return response()->json($users);
     }
 
