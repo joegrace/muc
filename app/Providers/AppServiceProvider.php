@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Message;
 use App\Observers\MessageObserver;
+use Illuminate\Support\Facades\URL;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -21,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
         
         // Message observer
         Message::observe(MessageObserver::class);
+        URL::forceScheme("https");
     }
 
     /**
