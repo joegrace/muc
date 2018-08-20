@@ -11,8 +11,8 @@
 
 namespace Symfony\Component\HttpFoundation;
 
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * BinaryFileResponse represents an HTTP response delivering a file.
@@ -36,8 +36,6 @@ class BinaryFileResponse extends Response
     protected $deleteFileAfterSend = false;
 
     /**
-     * Constructor.
-     *
      * @param \SplFileInfo|string $file               The file to stream
      * @param int                 $status             The response status code
      * @param array               $headers            An array of response headers
@@ -46,7 +44,7 @@ class BinaryFileResponse extends Response
      * @param bool                $autoEtag           Whether the ETag header should be automatically set
      * @param bool                $autoLastModified   Whether the Last-Modified header should be automatically set
      */
-    public function __construct($file, $status = 200, $headers = array(), $public = true, $contentDisposition = null, $autoEtag = false, $autoLastModified = true)
+    public function __construct($file, int $status = 200, array $headers = array(), bool $public = true, string $contentDisposition = null, bool $autoEtag = false, bool $autoLastModified = true)
     {
         parent::__construct(null, $status, $headers);
 
@@ -141,7 +139,7 @@ class BinaryFileResponse extends Response
      */
     public function setAutoEtag()
     {
-        $this->setEtag(sha1_file($this->file->getPathname()));
+        $this->setEtag(base64_encode(hash_file('sha256', $this->file->getPathname(), true)));
 
         return $this;
     }
@@ -157,7 +155,7 @@ class BinaryFileResponse extends Response
      */
     public function setContentDisposition($disposition, $filename = '', $filenameFallback = '')
     {
-        if ($filename === '') {
+        if ('' === $filename) {
             $filename = $this->file->getFilename();
         }
 
@@ -167,7 +165,7 @@ class BinaryFileResponse extends Response
             for ($i = 0, $filenameLength = mb_strlen($filename, $encoding); $i < $filenameLength; ++$i) {
                 $char = mb_substr($filename, $i, 1, $encoding);
 
-                if ('%' === $char || ord($char) < 32 || ord($char) > 126) {
+                if ('%' === $char || \ord($char) < 32 || \ord($char) > 126) {
                     $filenameFallback .= '_';
                 } else {
                     $filenameFallback .= $char;
@@ -217,20 +215,15 @@ class BinaryFileResponse extends Response
             if (false === $path) {
                 $path = $this->file->getPathname();
             }
-            if (strtolower($type) === 'x-accel-redirect') {
+            if ('x-accel-redirect' === strtolower($type)) {
                 // Do X-Accel-Mapping substitutions.
                 // @link http://wiki.nginx.org/X-accel#X-Accel-Redirect
-                foreach (explode(',', $request->headers->get('X-Accel-Mapping', '')) as $mapping) {
-                    $mapping = explode('=', $mapping, 2);
-
-                    if (2 === count($mapping)) {
-                        $pathPrefix = trim($mapping[0]);
-                        $location = trim($mapping[1]);
-
-                        if (substr($path, 0, strlen($pathPrefix)) === $pathPrefix) {
-                            $path = $location.substr($path, strlen($pathPrefix));
-                            break;
-                        }
+                $parts = HeaderUtils::split($request->headers->get('X-Accel-Mapping', ''), ',=');
+                $mappings = HeaderUtils::combine($parts);
+                foreach ($mappings as $pathPrefix => $location) {
+                    if (substr($path, 0, \strlen($pathPrefix)) === $pathPrefix) {
+                        $path = $location.substr($path, \strlen($pathPrefix));
+                        break;
                     }
                 }
             }
@@ -256,7 +249,7 @@ class BinaryFileResponse extends Response
                     if ($start < 0 || $end > $fileSize - 1) {
                         $this->setStatusCode(416);
                         $this->headers->set('Content-Range', sprintf('bytes */%s', $fileSize));
-                    } elseif ($start !== 0 || $end !== $fileSize - 1) {
+                    } elseif (0 !== $start || $end !== $fileSize - 1) {
                         $this->maxlen = $end < $fileSize ? $end - $start + 1 : -1;
                         $this->offset = $start;
 
@@ -352,7 +345,7 @@ class BinaryFileResponse extends Response
      *
      * @return $this
      */
-    public function deleteFileAfterSend($shouldDelete)
+    public function deleteFileAfterSend($shouldDelete = true)
     {
         $this->deleteFileAfterSend = $shouldDelete;
 

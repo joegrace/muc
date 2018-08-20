@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Throwable;
 use ReflectionClass;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Symfony\Component\Finder\Finder;
@@ -195,7 +196,7 @@ class Kernel implements KernelContract
      */
     protected function load($paths)
     {
-        $paths = array_unique(is_array($paths) ? $paths : (array) $paths);
+        $paths = array_unique(Arr::wrap($paths));
 
         $paths = array_filter($paths, function ($path) {
             return is_dir($path);
@@ -214,9 +215,8 @@ class Kernel implements KernelContract
                 Str::after($command->getPathname(), app_path().DIRECTORY_SEPARATOR)
             );
 
-            $reflector = new ReflectionClass($command);
-
-            if (! $reflector->isAbstract() && $reflector->isSubclassOf(Command::class)) {
+            if (is_subclass_of($command, Command::class) &&
+                ! (new ReflectionClass($command))->isAbstract()) {
                 Artisan::starting(function ($artisan) use ($command) {
                     $artisan->resolve($command);
                 });

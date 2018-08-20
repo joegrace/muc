@@ -24,7 +24,9 @@ trait AuthenticatesUsers
      * Handle a login request to the application.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function login(Request $request)
     {
@@ -74,7 +76,7 @@ trait AuthenticatesUsers
     protected function attemptLogin(Request $request)
     {
         return $this->guard()->attempt(
-            $this->credentials($request), $request->has('remember')
+            $this->credentials($request), $request->filled('remember')
         );
     }
 
@@ -121,7 +123,9 @@ trait AuthenticatesUsers
      * Get the failed login response instance.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Illuminate\Validation\ValidationException
      */
     protected function sendFailedLoginResponse(Request $request)
     {
@@ -152,7 +156,18 @@ trait AuthenticatesUsers
 
         $request->session()->invalidate();
 
-        return redirect('/');
+        return $this->loggedOut($request) ?: redirect('/');
+    }
+
+    /**
+     * The user has logged out of the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return mixed
+     */
+    protected function loggedOut(Request $request)
+    {
+        //
     }
 
     /**

@@ -82,6 +82,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $privateKey;
 
     /**
+     * @string
+     */
+    protected $defaultScope;
+
+    /**
      * @param ClientRepositoryInterface $clientRepository
      */
     public function setClientRepository(ClientRepositoryInterface $clientRepository)
@@ -148,6 +153,14 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * @param string $scope
+     */
+    public function setDefaultScope($scope)
+    {
+        $this->defaultScope = $scope;
+    }
+
+    /**
      * Validate the client.
      *
      * @param ServerRequestInterface $request
@@ -180,25 +193,41 @@ abstract class AbstractGrant implements GrantTypeInterface
             throw OAuthServerException::invalidClient();
         }
 
-        // If a redirect URI is provided ensure it matches what is pre-registered
         $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
+
         if ($redirectUri !== null) {
-            if (
-                is_string($client->getRedirectUri())
-                && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
-            ) {
-                $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
-            } elseif (
-                is_array($client->getRedirectUri())
-                && in_array($redirectUri, $client->getRedirectUri()) === false
-            ) {
-                $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
-            }
+            $this->validateRedirectUri($redirectUri, $client, $request);
         }
 
         return $client;
+    }
+
+    /**
+     * Validate redirectUri from the request.
+     * If a redirect URI is provided ensure it matches what is pre-registered
+     *
+     * @param string                 $redirectUri
+     * @param ClientEntityInterface  $client
+     * @param ServerRequestInterface $request
+     *
+     * @throws OAuthServerException
+     */
+    protected function validateRedirectUri(
+        string $redirectUri,
+        ClientEntityInterface $client,
+        ServerRequestInterface $request
+    ) {
+        if (is_string($client->getRedirectUri())
+            && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
+        ) {
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            throw OAuthServerException::invalidClient();
+        } elseif (is_array($client->getRedirectUri())
+            && in_array($redirectUri, $client->getRedirectUri(), true) === false
+        ) {
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            throw OAuthServerException::invalidClient();
+        }
     }
 
     /**
@@ -211,18 +240,14 @@ abstract class AbstractGrant implements GrantTypeInterface
      *
      * @return ScopeEntityInterface[]
      */
-    public function validateScopes(
-        $scopes,
-        $redirectUri = null
-    ) {
-        $scopesList = array_filter(
-            explode(self::SCOPE_DELIMITER_STRING, trim($scopes)),
-            function ($scope) {
-                return !empty($scope);
-            }
-        );
+    public function validateScopes($scopes, $redirectUri = null)
+    {
+        $scopesList = array_filter(explode(self::SCOPE_DELIMITER_STRING, trim($scopes)), function ($scope) {
+            return !empty($scope);
+        });
 
-        $scopes = [];
+        $validScopes = [];
+
         foreach ($scopesList as $scopeItem) {
             $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeItem);
 
@@ -230,10 +255,10 @@ abstract class AbstractGrant implements GrantTypeInterface
                 throw OAuthServerException::invalidScope($scopeItem, $redirectUri);
             }
 
-            $scopes[] = $scope;
+            $validScopes[] = $scope;
         }
 
-        return $scopes;
+        return $validScopes;
     }
 
     /**
@@ -332,7 +357,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      *
      * @param \DateInterval          $accessTokenTTL
      * @param ClientEntityInterface  $client
-     * @param string                 $userIdentifier
+     * @param string|null            $userIdentifier
      * @param ScopeEntityInterface[] $scopes
      *
      * @throws OAuthServerException
@@ -377,7 +402,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param \DateInterval          $authCodeTTL
      * @param ClientEntityInterface  $client
      * @param string                 $userIdentifier
-     * @param string                 $redirectUri
+     * @param string|null            $redirectUri
      * @param ScopeEntityInterface[] $scopes
      *
      * @throws OAuthServerException
@@ -398,7 +423,10 @@ abstract class AbstractGrant implements GrantTypeInterface
         $authCode->setExpiryDateTime((new \DateTime())->add($authCodeTTL));
         $authCode->setClient($client);
         $authCode->setUserIdentifier($userIdentifier);
-        $authCode->setRedirectUri($redirectUri);
+
+        if ($redirectUri !== null) {
+            $authCode->setRedirectUri($redirectUri);
+        }
 
         foreach ($scopes as $scope) {
             $authCode->addScope($scope);
